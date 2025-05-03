@@ -110,14 +110,6 @@ void delay_ms(uint32_t ms) {
     delay(ms);
 }
 
-void dbg_write(uint8_t c) {
-
-}
-
-void dbg_print(const char* s) {
-
-}
-
 nvs_handle_t nvs_init(const char* name) {
     nvs_handle_t handle;
     esp_err_t    err = nvs_open(name, NVS_READWRITE, &handle);

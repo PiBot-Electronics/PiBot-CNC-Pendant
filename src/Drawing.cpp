@@ -7,7 +7,7 @@
 #include <map>
 
 void drawBackground(int color) {
-    canvas.clear(color);
+    canvas.fillSprite(color);
 }
 
 void drawFilledCircle(int x, int y, int radius, int fillcolor) {

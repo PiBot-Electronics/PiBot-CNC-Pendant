@@ -93,6 +93,9 @@ nvs_handle_t hw_nvs;
 void init_hardware() {
     hw_nvs = nvs_init("hardware");
     nvs_get_i32(hw_nvs, "layout", &layout_num);
+    red_button_pin   = BUTTON_RED_PIN;
+    dial_button_pin  = BUTTON_YELLOW_PIN;
+    green_button_pin = BUTTON_GREEN_PIN;
 
     display.init();
     //display.clear(TFT_BLACK);
