@@ -21,8 +21,6 @@ void setup() {
 
     delay_ms(2000);  // view the logo and wait for the debug port to connect
 
-    dbg_printf("FluidNC Pendant %s\n", git_info);
-
     fnc_realtime(StatusReport);  // Kick FluidNC into action
 
     // init_file_list();

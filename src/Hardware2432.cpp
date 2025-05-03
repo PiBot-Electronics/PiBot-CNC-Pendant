@@ -4,16 +4,13 @@
 // System interface routines for the Arduino framework
 
 #include "System.h"
-#include <LGFX_AUTODETECT.hpp>
 #include "Hardware2432.hpp"
 #include "Drawing.h"
 #include "NVS.h"
-
+#include "pibot-cnc.h"
 #include <driver/uart.h>
 #include "hal/uart_hal.h"
 
-m5::Touch_Class  xtouch;
-m5::Touch_Class& touch = xtouch;
 
 LGFX         xdisplay;
 LGFX_Device& display = xdisplay;
@@ -27,10 +24,6 @@ LGFX_Sprite locked_buttons(&xdisplay);
 int red_button_pin   = -1;
 int dial_button_pin  = -1;
 int green_button_pin = -1;
-
-#ifdef DEBUG_TO_USB
-Stream& debugPort = Serial;
-#endif
 
 bool round_display = false;
 
@@ -52,9 +45,7 @@ public:
     Point buttonsHeight;
     Point buttonsWH;
     Point spritePosition;
-#if 0
-    Point buttonPosition[3];
-#endif
+
     Layout(int rotation, Point spritePosition, Point firstButtonPosition) :
         _rotation(rotation), spritePosition(spritePosition), buttonsXY(firstButtonPosition) {
         if (_rotation & 1) {  // Vertical
@@ -62,18 +53,7 @@ public:
         } else {
             buttonsWH = { sprite_wh, button_h };
         }
-#if 0
-        buttonPosition[0] = buttonsXY;
-        if (_rotation & 1) { // Vertical
-            int x             = buttonPosition[0].x;
-            buttonPosition[1] = { x, button_h };
-            buttonPosition[2] = { x, 2 * button_h };
-        } else {
-            int y             = buttonPosition[0].y;
-            buttonPosition[1] = { button_w, y };
-            buttonPosition[2] = { 2 * button_w, y };
-        }
-#endif
+
     }
     Point buttonOffset(int n) {
         return (_rotation & 1) ? Point(0, n * button_h) : Point(n * button_w, 0);
@@ -99,7 +79,7 @@ Layout layouts[] = {
 // clang-format on
 
 Layout* layout;
-int     layout_num = 0;
+int32_t     layout_num = 0;
 
 Point sprite_offset;
 void  set_layout(int n) {
@@ -111,66 +91,25 @@ void  set_layout(int n) {
 nvs_handle_t hw_nvs;
 
 void init_hardware() {
-#ifdef DEBUG_TO_USB
-    Serial.begin(115200);
-#endif
     hw_nvs = nvs_init("hardware");
     nvs_get_i32(hw_nvs, "layout", &layout_num);
 
     display.init();
+    //display.clear(TFT_BLACK);
+    //display.fillScreen(TFT_BLACK);
     set_layout(layout_num);
-
-    touch.begin(&display);
-
-    int enc_a = -1, enc_b = -1;
-    red_button_pin   = -1;
-    dial_button_pin  = -1;
-    green_button_pin = -1;
-
-    lgfx::boards::board_t board_id = display.getBoard();
-    switch (board_id) {
-        case lgfx::boards::board_Guition_ESP32_2432W328:
 #ifdef LOCKOUT_PIN
             pinMode(LOCKOUT_PIN, INPUT);
 #endif
 
-#ifdef CYD_BUTTONS
-            enc_a = GPIO_NUM_22;
-            enc_b = GPIO_NUM_21;
-            // rotary_button_pin = GPIO_NUM_35;
-            // pinMode(rotary_button_pin, INPUT);  // Pullup does not work on GPIO35
+    pinMode(BUTTON_RED_PIN, INPUT_PULLUP);
+    pinMode(BUTTON_YELLOW_PIN, INPUT_PULLUP);
+    pinMode(BUTTON_GREEN_PIN, INPUT_PULLUP);
 
-            red_button_pin   = GPIO_NUM_4;   // RGB LED Red
-            dial_button_pin  = GPIO_NUM_17;  // RGB LED Blue
-            green_button_pin = GPIO_NUM_16;  // RGB LED Green
-            pinMode(red_button_pin, INPUT_PULLUP);
-            pinMode(dial_button_pin, INPUT_PULLUP);
-            pinMode(green_button_pin, INPUT_PULLUP);
-#else
-            enc_a = GPIO_NUM_22;
-            enc_b = GPIO_NUM_17;  // RGB LED Blue
-#endif
-            // backlight = GPIO_NUM_27;
-            break;
-        case lgfx::boards::board_Sunton_ESP32_2432S028:
-            enc_a = GPIO_NUM_22;
-            enc_b = GPIO_NUM_27;
-            break;
-        default:
-            dbg_printf("Unknown board id %d\n", board_id);
-            break;
-    }
-    init_encoder(enc_a, enc_b);
+
+    init_encoder(ROTARY_A_PIN, ROTARY_B_PIN);
     init_fnc_uart(FNC_UART_NUM, PND_TX_FNC_RX_PIN, PND_RX_FNC_TX_PIN);
 
-    touch.setFlickThresh(10);
-
-#ifdef LED_DEBUG
-    // RGB LED pins
-    pinMode(4, OUTPUT);   // Red
-    pinMode(16, OUTPUT);  // Green
-    pinMode(17, OUTPUT);  // Blue
-#endif
 }
 
 void initButton(int n) {
@@ -231,7 +170,7 @@ static void initButtons() {
 }
 
 void base_display() {
-    display.clear();
+    display.clear(BLACK);
     display.drawPngFile(
         LittleFS, "/fluid_dial.png", sprite_offset.x, sprite_offset.y, sprite_wh, sprite_wh, 0, 0, 0.0f, 0.0f, datum_t::middle_center);
 
@@ -347,14 +286,9 @@ bool screen_button_touched(bool pressed, int x, int y, int& button) {
 
 void update_events() {
     auto ms = lgfx::millis();
-    if (touch.isEnabled()) {
-        if (touch_debounce) {
-            if ((ms - touch_timeout) < 0) {
-                return;
-            }
-            touch_debounce = false;
-        }
-        touch.update(ms);
+    if (display.touch()!= nullptr) {
+       
+       // touch.update(ms);
     }
 }
 

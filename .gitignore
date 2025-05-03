@@ -1,6 +1,5 @@
 prefs
-.pio
+.pioenvs
 .vscode
-src/version.cpp
 *~
 junk

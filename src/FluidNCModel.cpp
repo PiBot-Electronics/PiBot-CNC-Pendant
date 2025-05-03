@@ -131,7 +131,6 @@ extern "C" void show_limits(bool probe, const bool* limits, size_t n_axis) {
 }
 
 extern "C" void show_control_pins(const char* pins) {
-    //dbg_printf("show_control_pins:%s\r\n", pins);
     myCtrlPins = pins;
 }
 
@@ -166,7 +165,6 @@ extern "C" void show_dro(const pos_t* axes, const pos_t* wco, bool isMpos, bool*
 
 void send_line(const char* s, int timeout) {
     fnc_send_line(s, timeout);
-    dbg_println(s);
 }
 static void vsend_linef(const char* fmt, va_list va) {
     static char buf[128];
@@ -234,7 +232,6 @@ extern "C" void handle_other(char* line) {
     if (strncmp(line, "Active alarm: ", alarmlen) == 0) {
         lastAlarm = atoi(line + alarmlen);
         if (awaiting_alarm) {
-            dbg_printf("Got alarm %d\n", lastAlarm);
             awaiting_alarm = false;
             act_on_state_change();
         }
@@ -248,7 +245,7 @@ extern "C" void show_error(int error) {
 }
 
 extern "C" void show_timeout() {
-    dbg_println("Timeout");
+
 }
 extern "C" void show_ok() {}
 

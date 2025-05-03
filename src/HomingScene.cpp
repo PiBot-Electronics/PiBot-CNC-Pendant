@@ -135,23 +135,6 @@ public:
                 dro.drawHoming(axis, is_homing(axis), is_homed(axis));
             }
 
-#if 0
-            int x      = 50;
-            int y      = 65;
-            int width  = display.width() - (x * 2);
-            int height = 32;
-
-            Stripe button(x, y, width, height, SMALL);
-            button.draw("Home All", _axis_to_home == -1);
-            y = button.y();  // LEDs start with the Home X button
-            button.draw("Home X", _axis_to_home == 0);
-            button.draw("Home Y", _axis_to_home == 1);
-            button.draw("Home Z", _axis_to_home == 2);
-            LED led(x - 16, y + height / 2, 10, button.gap());
-            led.draw(myLimitSwitches[0]);
-            led.draw(myLimitSwitches[1]);
-            led.draw(myLimitSwitches[2]);
-#endif
 
             if (state == Homing) {
                 redLabel = "E-Stop";

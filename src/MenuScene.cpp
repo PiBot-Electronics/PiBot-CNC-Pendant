@@ -1,8 +1,5 @@
 #include "Menu.h"
 #include "PieMenu.h"
-#ifdef USE_WMB_FSS
-#    include "FileMenu.h"
-#endif
 #include "System.h"
 
 void noop(void* arg) {}
@@ -43,11 +40,9 @@ extern Scene toolchangeScene;
 extern Scene statusScene;
 extern Scene macroMenu;
 
-#ifdef USE_WMB_FSS
-extern Scene wmbFileSelectScene;
-#else
+
 extern Scene fileSelectScene;
-#endif
+
 
 Scene& jogScene = multiJogScene;
 
@@ -60,11 +55,7 @@ IB jogButton("Jog", &jogScene, "jogtp.png");
 IB probeButton("Probe", &probingScene, "probetp.png");
 IB toolchangeButton("Tools", &toolchangeScene, "toolchangetp.png");
 
-#ifdef USE_WMB_FSS
-IB filesButton("Files", &wmbFileSelectScene, "filestp.png");
-#else
 IB filesButton("Files", &fileSelectScene, "filestp.png");
-#endif
 
 IB controlButton("Macros", &macroMenu, "macrostp.png");
 IB setupButton("About", &aboutScene, "abouttp.png");

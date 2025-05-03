@@ -86,7 +86,7 @@ void dispatch_button(bool pressed, int button) {
     }
 }
 void dispatch_touch() {
-    static m5::touch_state_t last_touch_state = {};
+    /*static m5::touch_state_t last_touch_state = {};
 
     auto t = touch.getDetail();
     if (t.state != last_touch_state) {
@@ -141,7 +141,7 @@ void dispatch_touch() {
                 current_scene->onTouchFlick();
             }
         }
-    }
+    }*/
 }
 
 ActionHandler action = nullptr;

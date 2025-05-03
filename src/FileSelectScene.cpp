@@ -106,7 +106,6 @@ public:
     void onEncoder(int delta) override { scroll(delta); }
 
     void onMessage(char* command, char* arguments) override {
-        dbg_printf("FileSelectScene::onMessage(\"%s\", \"%s\")\r\n", command, arguments);
         // now just need to know what to do with messages
     }
 

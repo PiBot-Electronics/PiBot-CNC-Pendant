@@ -126,7 +126,6 @@ public:
             }
         }
         confirmMsg += " ?";
-        dbg_println(confirmMsg.c_str());
         push_scene(&confirmScene, (void*)confirmMsg.c_str());
     }
     void set_dist_index(int axis, int value) {
@@ -283,11 +282,6 @@ public:
             reDisplay();
             return;
         }
-#if 0
-        if (touchX < 160 && touchY > 160) {
-            confirm_zero_axes();
-        }
-#endif
     }
 
     void onRightFlick() override {

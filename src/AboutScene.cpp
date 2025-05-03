@@ -30,15 +30,12 @@ void AboutScene::onGreenButtonPress() {
 }
 void AboutScene::onRedButtonPress() {
     set_disconnected_state();
-#ifdef ARDUINO
     centered_text("Use red button to wakeup", 118, RED, TINY);
     refreshDisplay();
     delay_ms(2000);
 
     deep_sleep(0);
-#else
-    dbg_println("Sleep");
-#endif
+
 }
 
 void AboutScene::onTouchClick() {
@@ -82,10 +79,9 @@ void AboutScene::reDisplay() {
     text(intToCStr(FNC_BAUD), val_x, y, GREEN, TINY, bottom_left);
 #endif
 
-#ifndef DEBUG_TO_USB  // backlight shares a pin with this.
     text("Brightness:", key_x, y += y_spacing, LIGHTGREY, TINY, bottom_right);
     text(intToCStr(_brightness), val_x, y, GREEN, TINY, bottom_left);
-#endif
+
 
     if (wifi_ssid.length()) {
         std::string wifi_str = wifi_mode;

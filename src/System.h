@@ -14,9 +14,7 @@ extern Stream&             debugPort;
 void                       init_fnc_uart(int uart_num, int tx_pin, int rx_pin);
 #endif  // ARDUINO
 
-#ifdef USE_LOVYANGFX
 #    include "LovyanGFX.h"
-#    include "Touch_Class.hpp"
 
 #    define WHITE TFT_WHITE
 #    define BLACK TFT_BLACK
@@ -31,28 +29,17 @@ void                       init_fnc_uart(int uart_num, int tx_pin, int rx_pin);
 #    define ORANGE TFT_ORANGE
 #    define BROWN TFT_BROWN
 #    define MAROON TFT_MAROON
-#endif  // USE_LOVYANGFX
 
-#ifdef USE_M5
-#    include "M5Unified.h"
-#endif  // USE_M5
 
 extern LGFX_Device&     display;
 extern LGFX_Sprite      canvas;
-extern m5::Touch_Class& touch;
+//extern m5::Touch_Class& touch;
 
 void drawPngFile(const char* filename, int x, int y);
 
 void init_system();
 
 void ackBeep();
-
-void dbg_write(uint8_t c);
-void dbg_print(const char* s);
-void dbg_println(const char* s);
-void dbg_print(const std::string& s);
-void dbg_println(const std::string& s);
-void dbg_printf(const char* format, ...);
 
 void update_events();
 void delay_ms(uint32_t ms);

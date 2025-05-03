@@ -92,15 +92,7 @@ public:
             haveNewFile = false;
         }
     }
-
-    //#define DEBUG_FILE_LIST
     void endDocument() override {
-#ifdef DEBUG_FILE_LIST
-        int ix = 0;
-        for (auto const& vi : fileVector) {
-            dbg_printf("[%d] type: %s:\"%s\", size: %d\r\n", ix++, (vi.isDir()) ? "file" : "dir ", vi.fileName.c_str(), vi.fileSize);
-        }
-#endif
         init_listener();
     }
 } filesListListener;
@@ -619,7 +611,6 @@ void parse_wifi(char* arguments) {
 
 // command is "Mode=STA" - or AP or No Wifi
 void handle_radio_mode(char* command, char* arguments) {
-    dbg_printf("Mode %s %s\n", command, arguments);
     char* value;
     split(command, &value, '=');
     wifi_mode = value;
@@ -641,7 +632,6 @@ extern "C" void handle_msg(char* command, char* arguments) {
         }
     }
     if (strcmp(command, "RST") == 0) {
-        dbg_println("FluidNC Reset");
         state = Disconnected;
         act_on_state_change();
     }

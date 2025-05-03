@@ -21,47 +21,21 @@ uart_port_t fnc_uart_port;
 
 extern "C" void fnc_putchar(uint8_t c) {
     uart_write_bytes(fnc_uart_port, (const char*)&c, 1);
-#ifdef ECHO_FNC_TO_DEBUG
-    dbg_write(c);
-#endif
 }
 
-void ledcolor(int n) {
-    digitalWrite(4, !(n & 1));
-    digitalWrite(16, !(n & 2));
-    digitalWrite(17, !(n & 4));
-}
+
 extern "C" int fnc_getchar() {
     char c;
     int  res = uart_read_bytes(fnc_uart_port, &c, 1, 0);
     if (res == 1) {
-#ifdef LED_DEBUG
-        if (c == '\r' || c == '\n') {
-            ledcolor(0);
-        } else {
-            ledcolor(c & 7);
-        }
-#endif
         update_rx_time();
-#ifdef ECHO_FNC_TO_DEBUG
-        dbg_write(c);
-#endif
         return c;
     }
     return -1;
 }
 
 extern "C" void poll_extra() {
-#ifdef DEBUG_TO_USB
-    if (debugPort.available()) {
-        char c = debugPort.read();
-        if (c == 0x12) {  // CTRL-R
-            ESP.restart();
-            while (1) {}
-        }
-        fnc_putchar(c);  // So you can type commands to FluidNC
-    }
-#endif
+
 }
 
 void drawPngFile(const char* filename, int x, int y) {
@@ -102,7 +76,6 @@ void init_fnc_uart(int uart_num, int tx_pin, int rx_pin) {
     conf.flow_ctrl           = UART_HW_FLOWCTRL_DISABLE;
     conf.rx_flow_ctrl_thresh = 0;
     if (uart_param_config(fnc_uart_port, &conf) != ESP_OK) {
-        dbg_println("UART config failed");
         while (1) {}
         return;
     };
@@ -116,7 +89,7 @@ void init_system() {
     init_hardware();
 
     if (!LittleFS.begin(FORMAT_LITTLEFS_IF_FAILED)) {
-        dbg_println("LittleFS Mount Failed");
+
         return;
     }
 
@@ -138,19 +111,11 @@ void delay_ms(uint32_t ms) {
 }
 
 void dbg_write(uint8_t c) {
-#ifdef DEBUG_TO_USB
-    if (debugPort.availableForWrite() > 1) {
-        debugPort.write(c);
-    }
-#endif
+
 }
 
 void dbg_print(const char* s) {
-#ifdef DEBUG_TO_USB
-    if (debugPort.availableForWrite() > strlen(s)) {
-        debugPort.print(s);
-    }
-#endif
+
 }
 
 nvs_handle_t nvs_init(const char* name) {
